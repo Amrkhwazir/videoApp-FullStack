@@ -1,0 +1,17 @@
+export const darkTheme = {
+    bg: "#181818",
+    bgLighter: "#202020",
+    text: "white",
+    textSoft: "#aaaaaa",
+    soft: "#373737",
+    hoverColor: "white"
+}
+
+export const lightTheme = {
+    bg: "#f9f9f9",
+    bgLighter: "white",
+    text: "black",
+    textSoft: "#aaaaaa",
+    soft: "gray",
+    hoverColor: "white"
+}
