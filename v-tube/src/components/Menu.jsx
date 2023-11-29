@@ -4,6 +4,7 @@ import vtubeLogo from "../image/logo.png"
 import HomeIcon from '@mui/icons-material/Home';
 import { AccountCircleOutlined, ExploreOutlined, FlagOutlined, GamesOutlined, HelpOutlineOutlined, HistoryOutlined, LiveTvOutlined, MovieCreationOutlined, MusicNoteOutlined, NewspaperOutlined, SettingsBrightnessOutlined, SettingsOutlined, SportsBaseballOutlined, SubscriptionsOutlined, VideoLibraryOutlined } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 
 
 const Container = styled.div`
@@ -68,6 +69,9 @@ const Title = styled.h2`
 `
 
 export default function Menu({setDarkMode, darkMode}) {
+
+    const {currentUser} = useSelector(state => state.user)
+
   return (
     <Container>
         <Wrapper>
@@ -103,13 +107,17 @@ export default function Menu({setDarkMode, darkMode}) {
                 History
             </Items>
             <Hr/>
-            <Login>
+            
+            {!currentUser && <> 
+                <Login>
                 sign in to like videos, comment, and subscribe.
                 <Link to="signin" style={{textDecoration: "none"}}>
                 <Button> <AccountCircleOutlined/> SIGN IN</Button>
                 </Link>
             </Login>
             <Hr/>
+            </>}
+            
             <Title>BEST OF VTUBE</Title>
             <Items>
                 <MusicNoteOutlined/>
