@@ -22,7 +22,7 @@ userRouter.put("/unsub/:id", verifyToken, unsubscribeUser)
 
 
 // like a video
-userRouter.put("/like/:videoId", likeVideo)
+userRouter.put("/like/:videoId", verifyToken, likeVideo)
 
 
 // dislike a video

@@ -1,8 +1,13 @@
-import { AddTaskOutlined, ReplyOutlined, ThumbDownAltOutlined, ThumbUpAltOutlined } from '@mui/icons-material'
-import React from 'react'
+import { AddTaskOutlined, ReplyOutlined, ThumbDown, ThumbDownAlt, ThumbDownAltOutlined, ThumbUp, ThumbUpAlt, ThumbUpAltOutlined } from '@mui/icons-material'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Comments } from '../components/Comments'
 import Card from '../components/Card'
+import { useDispatch, useSelector } from 'react-redux'
+import { useLocation } from 'react-router-dom'
+import axios from 'axios'
+import { disLike, fetchSuccess, like } from '../redux/videoSlice'
+import {format} from "timeago.js"
 
 const Container = styled.div`
   display: flex;
@@ -96,6 +101,40 @@ const Subscribe = styled.button`
 
 
 const Video = () => {
+  const {currentUser} = useSelector(state => state.user);
+  const {currentVideo} = useSelector(state => state.video);
+  const dispatch = useDispatch();
+  
+  const path = useLocation().pathname.split("/")[2]
+
+  const [channel, setChannel] = useState({});
+  
+  useEffect(()=>{
+    const fetchData = async () =>{
+      try {
+        const videoResponse = await axios.get(`http://127.0.0.1:8000/api/videos/find/${path}`); 
+        const channelResponse = await axios.get(`http://127.0.0.1:8000/api/users/find/${videoResponse.data.userId}`); 
+        
+        setChannel(channelResponse.data);
+        dispatch(fetchSuccess(videoResponse.data))
+
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    fetchData();
+  },[path, dispatch])
+  
+  const likeHandler = async () => {
+    await axios.put(`http://127.0.0.1:8000/api/users/like/${currentVideo._id}`);
+    dispatch(like(currentUser._id))
+  }
+  
+  const disLikeHandler = async () => {
+    await axios.put(`http://127.0.0.1:8000/api/users/dislike/${currentVideo._id}`);
+    dispatch(disLike(currentUser._id))
+  }
+  
   return (
     <Container>
       <Content>
@@ -110,12 +149,23 @@ const Video = () => {
             allowfullscreen
             ></iframe>
             </VideoWrapper>
-          <Title>Test Video</Title>
+          <Title>{currentVideo.title}</Title>
           <Details>
-            <Info>7,897,499 views . Jun 22, 2023</Info>
+            <Info>{currentVideo.views} views . {format(currentVideo.createdAt)}</Info>
             <Buttons>
-              <Button><ThumbUpAltOutlined />123</Button>
-              <Button><ThumbDownAltOutlined />Dislike</Button>
+              <Button onClick={likeHandler}>
+              {currentVideo.likes?.includes(currentUser._id) ? ( 
+              <ThumbUpAlt/>
+              ) : (
+              <ThumbUpAltOutlined />)}{""}
+              {currentVideo.likes?.length}
+              </Button>
+              <Button onClick={disLikeHandler}>
+              {currentVideo.dislikes?.includes(currentUser._id) ?
+               (<ThumbDownAlt/>) :
+               (<ThumbDownAltOutlined />)}{""}
+               Dislike
+               </Button>
               <Button><ReplyOutlined />Share</Button>
               <Button><AddTaskOutlined />Save</Button>
             </Buttons>
@@ -123,12 +173,12 @@ const Video = () => {
           <Hr/>
           <Channel>
             <ChannelInfo>
-              <ChannelImage src='https://th.bing.com/th?q=Chart+Logo&w=120&h=120&c=1&rs=1&qlt=90&cb=1&dpr=1.5&pid=InlineBlock&mkt=en-WW&cc=PK&setlang=en&adlt=moderate&t=1&mw=247' />
+              <ChannelImage src={channel.img} />
               <ChannelDetail>
-                <ChannelName>V-Tube</ChannelName>
-                <ChannelCount>300k subscribers</ChannelCount>
+                <ChannelName>{channel.name}</ChannelName>
+                <ChannelCount>{channel.Subscribers} subscribers</ChannelCount>
                 <Description>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Alias, pariatur obcaecati id dolorum hic aut sequi sapiente debitis nulla, autem, quae voluptatem facilis quidem veniam magni eaque at! Quis, natus!
+                 {currentVideo.desc}
                 </Description>
               </ChannelDetail>
             </ChannelInfo>
@@ -137,7 +187,7 @@ const Video = () => {
           <Hr/>
           <Comments/>
       </Content>
-      <Recommendation>
+      {/* <Recommendation>
         <Card type="sm"/>
         <Card type="sm"/>
         <Card type="sm"/>
@@ -153,7 +203,7 @@ const Video = () => {
         <Card type="sm"/>
         <Card type="sm"/>
         <Card type="sm"/>
-      </Recommendation>
+      </Recommendation> */}
     </Container>
   )
 }

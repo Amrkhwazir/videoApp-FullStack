@@ -1,12 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
-import TimeAgo from 'javascript-time-ago';
-import en from 'javascript-time-ago/locale/en';
 import axios from 'axios';
+import {format} from "timeago.js"
 
-TimeAgo.addDefaultLocale(en)
-const timeAgo = new TimeAgo('en-US')
+
 
 const Container = styled.div`
   width: ${(props)=> props.type !== "sm" && "320px"};
@@ -71,7 +69,7 @@ const Card = ({type, video}) => {
     fetchChannel();
   },[video.userId])
   return (
-    <Link to="/video/test" style={{textDecoration: "none"}} >
+    <Link to={`/video/${video._id}`} style={{textDecoration: "none"}} >
     <Container type={type}>
       <Image type={type} src={video.imgUrl}/>
       <Details type={type}>
@@ -79,7 +77,7 @@ const Card = ({type, video}) => {
         <Texts>
           <Title>{video.title}</Title>
           <ChannelName>{channel.name}</ChannelName>
-          <Info>{video.views} . </Info>
+          <Info>{video.views} views . {format(video.createdAt)} </Info>
 
         </Texts>
       </Details>
