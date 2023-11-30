@@ -20,7 +20,7 @@ const initialState = {
             state.currentVideo = action.payload
         },
 
-        fetchFailure: (state,) => {
+        fetchFailure: (state) => {
 
             state.loading = false
             state.error = true
@@ -40,5 +40,5 @@ const initialState = {
     },
   })
 
-  export const {fetchStart, fetchSuccess, fetchFailure, like, disLike} =videoSlice.actions;
+  export const {fetchStart, fetchSuccess, fetchFailure, like, disLike} = videoSlice.actions;
   export default videoSlice.reducer

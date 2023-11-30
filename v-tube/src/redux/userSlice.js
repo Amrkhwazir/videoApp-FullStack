@@ -20,7 +20,7 @@ const initialState = {
             state.currentUser = action.payload
         },
 
-        loginFailure: (state,) => {
+        loginFailure: (state) => {
 
             state.loading = false
             state.error = true

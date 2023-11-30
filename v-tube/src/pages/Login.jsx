@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { loginFailure, loginStart, loginSuccess } from '../redux/userSlice';
 import {auth, provider} from "../firebaseConfig";
 import {signInWithPopup} from "firebase/auth"
+import { Navigate } from 'react-router-dom';
 
 const Container = styled.div`
     display: flex;
@@ -94,7 +95,8 @@ const Login = () => {
                     email: result.user.email,
                     img: result.user.photoURL,
                 }).then((res)=>{
-                    dispatch(loginSuccess(res.data))
+                    dispatch(loginSuccess(res.data));
+                    Navigate('/')
                 })
             }).catch((error) => {
                 dispatch(loginFailure())

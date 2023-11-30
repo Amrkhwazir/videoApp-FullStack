@@ -1,12 +1,11 @@
-import { AddTaskOutlined, ReplyOutlined, ThumbDown, ThumbDownAlt, ThumbDownAltOutlined, ThumbUp, ThumbUpAlt, ThumbUpAltOutlined } from '@mui/icons-material'
+import { AddTaskOutlined, ReplyOutlined, ThumbDownAlt, ThumbDownAltOutlined, ThumbUpAlt, ThumbUpAltOutlined } from '@mui/icons-material'
 import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { Comments } from '../components/Comments'
-import Card from '../components/Card'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation } from 'react-router-dom'
 import axios from 'axios'
-import { disLike, fetchSuccess, like } from '../redux/videoSlice'
+import { disLike, fetchSuccess, like } from '../redux/videoSlice.js'
 import {format} from "timeago.js"
 
 const Container = styled.div`
@@ -101,22 +100,21 @@ const Subscribe = styled.button`
 
 
 const Video = () => {
+
   const {currentUser} = useSelector(state => state.user);
   const {currentVideo} = useSelector(state => state.video);
   const dispatch = useDispatch();
-  
-  const path = useLocation().pathname.split("/")[2]
 
+  const path = useLocation().pathname.split("/")[2]
   const [channel, setChannel] = useState({});
   
   useEffect(()=>{
     const fetchData = async () =>{
       try {
-        const videoResponse = await axios.get(`http://127.0.0.1:8000/api/videos/find/${path}`); 
-        const channelResponse = await axios.get(`http://127.0.0.1:8000/api/users/find/${videoResponse.data.userId}`); 
-        
+        const videoRes = await axios.get(`http://127.0.0.1:8000/api/videos/find/${path}`); 
+        const channelResponse = await axios.get(`http://127.0.0.1:8000/api/users/find/${videoRes.data.userId}`); 
         setChannel(channelResponse.data);
-        dispatch(fetchSuccess(videoResponse.data))
+        dispatch(fetchSuccess(videoRes.data));
 
       } catch (err) {
         console.log(err);
@@ -124,17 +122,19 @@ const Video = () => {
     }
     fetchData();
   },[path, dispatch])
-  
+
   const likeHandler = async () => {
-    await axios.put(`http://127.0.0.1:8000/api/users/like/${currentVideo._id}`);
-    dispatch(like(currentUser._id))
+    await axios.put(`http://127.0.0.1:8000/api/users/like/${currentVideo?._id}`);
+    dispatch(like(currentUser?._id))
   }
   
   const disLikeHandler = async () => {
-    await axios.put(`http://127.0.0.1:8000/api/users/dislike/${currentVideo._id}`);
-    dispatch(disLike(currentUser._id))
+    await axios.put(`http://127.0.0.1:8000/api/users/dislike/${currentVideo?._id}`);
+    dispatch(disLike(currentUser?._id))
   }
-  
+console.log(currentUser);
+console.log(currentVideo);
+
   return (
     <Container>
       <Content>
@@ -149,21 +149,21 @@ const Video = () => {
             allowfullscreen
             ></iframe>
             </VideoWrapper>
-          <Title>{currentVideo.title}</Title>
+          <Title>{currentVideo?.title}</Title>
           <Details>
-            <Info>{currentVideo.views} views . {format(currentVideo.createdAt)}</Info>
+            <Info>{currentVideo?.views} views . {format(currentVideo?.createdAt)}</Info>
             <Buttons>
               <Button onClick={likeHandler}>
-              {currentVideo.likes?.includes(currentUser._id) ? ( 
+              {currentVideo?.likes?.includes(currentUser?._id) ? ( 
               <ThumbUpAlt/>
               ) : (
-              <ThumbUpAltOutlined />)}{""}
-              {currentVideo.likes?.length}
+              <ThumbUpAltOutlined />)}{" "}
+              {currentVideo?.likes?.length}
               </Button>
               <Button onClick={disLikeHandler}>
-              {currentVideo.dislikes?.includes(currentUser._id) ?
+              {currentVideo?.dislikes?.includes(currentUser?._id) ?
                (<ThumbDownAlt/>) :
-               (<ThumbDownAltOutlined />)}{""}
+               (<ThumbDownAltOutlined />)}{" "}
                Dislike
                </Button>
               <Button><ReplyOutlined />Share</Button>
@@ -178,7 +178,7 @@ const Video = () => {
                 <ChannelName>{channel.name}</ChannelName>
                 <ChannelCount>{channel.Subscribers} subscribers</ChannelCount>
                 <Description>
-                 {currentVideo.desc}
+                 {currentVideo?.desc}
                 </Description>
               </ChannelDetail>
             </ChannelInfo>

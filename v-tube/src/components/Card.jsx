@@ -58,16 +58,17 @@ color:  ${({theme}) => theme.textSoft};
 
 const Card = ({type, video}) => {
 
+
   const [channel, setChannel] = useState({});
 
   useEffect(()=>{
     const fetchChannel = async () =>{
       const response = await axios.get(`http://127.0.0.1:8000/api/users/find/${video.userId}`);
       setChannel(response.data);
-      // console.log(response)
     }
     fetchChannel();
   },[video.userId])
+
   return (
     <Link to={`/video/${video._id}`} style={{textDecoration: "none"}} >
     <Container type={type}>
