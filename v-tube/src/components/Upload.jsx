@@ -99,10 +99,9 @@ const Upload = ({setOpen}) => {
     const storageRef = ref(storage, fileName);
     const uploadTask = uploadBytesResumable(storageRef, file,);
 
-// Listen for state changes, errors, and completion of the upload.
 uploadTask.on('state_changed',
   (snapshot) => {
-    // Get task progress, including the number of bytes uploaded and the total number of bytes to be uploaded
+
     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
     urlType === "imgUrl" ? setImgPer(Math.round(progress)) : setvideoPer(Math.round(progress));
     switch (snapshot.state) {
@@ -112,9 +111,11 @@ uploadTask.on('state_changed',
       case 'running':
         console.log('Upload is running');
         break;
-        
-    }
-  },(err)=>{
+        default:
+        break;
+        }
+  },
+  (err)=>{
 
   }, () => {
     getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
@@ -135,10 +136,11 @@ uploadTask.on('state_changed',
 
   const uploadHandler = async (e) => {
     e.preventDefault();
-    const res = await axios.post(`http://127.0.0.1:8000/api/videos/`, {...inputs, tags});
+    const res = await axios.post("http://127.0.0.1:8000/api/videos/", {...inputs, tags});
     setOpen(false);
+    console.log(res)
     res.status===200 && <Navigate to={`/video/${res.data._id}`} />
-  }
+  };
 
 
   return (
