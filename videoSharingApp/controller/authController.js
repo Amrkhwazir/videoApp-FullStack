@@ -34,10 +34,7 @@ export const signin = async(req, res, next)=>{
 
         res.cookie("access_token", token,{
             httpOnly: true,
-        }).status(200).json(other)
-
-      await  newUser.save();
-      res.status(200).send("user has been created");
+        }).status(200).send(other)
     } catch (error) {
         next(error);
     }

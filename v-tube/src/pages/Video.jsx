@@ -7,6 +7,7 @@ import { useLocation } from 'react-router-dom'
 import axios from 'axios'
 import { disLike, fetchSuccess, like } from '../redux/videoSlice.js'
 import {format} from "timeago.js"
+import { subscription } from '../redux/userSlice.js'
 
 const Container = styled.div`
   display: flex;
@@ -97,13 +98,17 @@ const Subscribe = styled.button`
   padding: 5px 10px;
   cursor: pointer;
 `
-
+const VideoFrame = styled.video`
+  max-height: 720px;
+  width: 100%;
+  object-fit: cover;
+`
 
 const Video = () => {
-
+  
+  const dispatch = useDispatch();
   const {currentUser} = useSelector(state => state.user);
   const {currentVideo} = useSelector(state => state.video);
-  const dispatch = useDispatch();
 
   const path = useLocation().pathname.split("/")[2]
   const [channel, setChannel] = useState({});
@@ -112,9 +117,9 @@ const Video = () => {
     const fetchData = async () =>{
       try {
         const videoRes = await axios.get(`http://127.0.0.1:8000/api/videos/find/${path}`); 
-        const channelResponse = await axios.get(`http://127.0.0.1:8000/api/users/find/${videoRes.data.userId}`); 
-        setChannel(channelResponse.data);
-        dispatch(fetchSuccess(videoRes.data));
+        const channelResponse = await axios.get(`http://127.0.0.1:8000/api/users/find/${videoRes?.data?.userId}`); 
+        setChannel(channelResponse?.data);
+        dispatch(fetchSuccess(videoRes?.data));
 
       } catch (err) {
         console.log(err);
@@ -124,30 +129,27 @@ const Video = () => {
   },[path, dispatch])
 
   const likeHandler = async () => {
-    await axios.put(`http://127.0.0.1:8000/api/users/like/${currentVideo?._id}`);
-    dispatch(like(currentUser?._id))
+    await axios.put(`http://127.0.0.1:8000/api/users/like/${currentVideo._id}`);
+    dispatch(like(currentUser._id))
   }
   
   const disLikeHandler = async () => {
-    await axios.put(`http://127.0.0.1:8000/api/users/dislike/${currentVideo?._id}`);
-    dispatch(disLike(currentUser?._id))
+    await axios.put(`http://127.0.0.1:8000/api/users/dislike/${currentVideo._id}`);
+    dispatch(disLike(currentUser._id))
   }
-console.log(currentUser);
-console.log(currentVideo);
+
+  const subscribeHandler = async ( ) => {
+    currentUser.subscribedChanel.includes(channel._id) ?
+    await axios.put(`http://127.0.0.1:8000/api/users/sub/${channel._id}`) :
+    await axios.put(`http://127.0.0.1:8000/api/users/unsub/${channel._id}`)
+    dispatch(subscription(channel._id))
+  }
 
   return (
     <Container>
       <Content>
         <VideoWrapper>
-        <iframe
-            width="100%"
-            height="500"
-            src="https://www.youtube.com/embed/k3Vfj-e1Ma4"
-            title="YouTube video player"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-            ></iframe>
+       <VideoFrame src={currentVideo.videoUrl} />
             </VideoWrapper>
           <Title>{currentVideo?.title}</Title>
           <Details>
@@ -182,10 +184,12 @@ console.log(currentVideo);
                 </Description>
               </ChannelDetail>
             </ChannelInfo>
-            <Subscribe>SUBSCRIBE</Subscribe>
+            <Subscribe onClick={subscribeHandler}>
+              {currentUser.subscribedChanel?.includes(channel._id) ? "SUBSCRIBED" : "SUBSCRIBE" }
+            </Subscribe>
           </Channel>
           <Hr/>
-          <Comments/>
+          <Comments videoId={currentVideo._id}/>
       </Content>
       {/* <Recommendation>
         <Card type="sm"/>

@@ -5,7 +5,7 @@ import { useDispatch } from 'react-redux';
 import { loginFailure, loginStart, loginSuccess } from '../redux/userSlice';
 import {auth, provider} from "../firebaseConfig";
 import {signInWithPopup} from "firebase/auth"
-import { Navigate } from 'react-router-dom';
+import { Navigate } from "react-router-dom";
 
 const Container = styled.div`
     display: flex;
@@ -81,6 +81,7 @@ const Login = () => {
             try {
                 const res = await axios.post("http://127.0.0.1:8000/api/auth/signin", {name, password});
                 dispatch(loginSuccess(res.data));
+                console.log(res.data.data);
             } catch (err) {
                 dispatch(loginFailure());
             }
@@ -96,7 +97,7 @@ const Login = () => {
                     img: result.user.photoURL,
                 }).then((res)=>{
                     dispatch(loginSuccess(res.data));
-                    Navigate('/')
+                    <Navigate to="/Home" replace={true} />
                 })
             }).catch((error) => {
                 dispatch(loginFailure())

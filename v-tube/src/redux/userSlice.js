@@ -27,9 +27,17 @@ const initialState = {
         },
         logout: (state) => {
          return   initialState
+        },
+        subscription : (state, action) => {
+            if(state.currentUser.subscribedChanel.includes(action.payload)){
+                state.currentUser.subscribedChanel.splice(state.currentUser.subscribedChanel.findIndex(chanelId => chanelId === action.payload),1);
+            }else{
+                state.currentUser.subscribedChanel.push(action.payload);
+            }
         }
+
     },
   })
 
-  export const {loginStart, loginSuccess, loginFailure, logout} =userSlice.actions;
+  export const {loginStart, loginSuccess, loginFailure, logout, subscription} =userSlice.actions;
   export default userSlice.reducer

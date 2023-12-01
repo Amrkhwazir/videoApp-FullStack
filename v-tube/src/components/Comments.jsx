@@ -1,6 +1,8 @@
 import styled from '@emotion/styled';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { SingleComment } from './SingleComment';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
 
 const Container = styled.div``;
 
@@ -25,27 +27,36 @@ const Input = styled.input`
   width: 100%;
 `;
 
-export const Comments = () => {
+
+export const Comments = ({videoId}) => {
+
+  const {currentUser} = useSelector(state => state.user);
+
+  const [comments, setComments] = useState([]);
+
+  useEffect(()=> {
+    const fetchComments = async () => {
+      try {
+        const response = axios.get(`http://127.0.0.1:8000/api/comments/${videoId}`)
+        setComments(response.data);
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    fetchComments();
+  }, [videoId])
+
   return (
     <Container>
         <NewComment>
-            <Avatar src='https://th.bing.com/th?q=Chart+Logo&w=120&h=120&c=1&rs=1&qlt=90&cb=1&dpr=1.5&pid=InlineBlock&mkt=en-WW&cc=PK&setlang=en&adlt=moderate&t=1&mw=247' />
+            <Avatar src={currentUser.img} />
             <Input placeholder='Add a comment...'/>
         </NewComment>
-        <SingleComment />
-        <SingleComment />
-        <SingleComment />
-        <SingleComment />
-        <SingleComment />
-        <SingleComment />
-        <SingleComment />
-        <SingleComment />
-        <SingleComment />
-        <SingleComment />
-        <SingleComment />
-        <SingleComment />
-        <SingleComment />
-        <SingleComment />
+
+        {comments?.map((comment)=>(
+          <SingleComment key={comment._id} comment={comment} />
+        ))}
+       
     </Container>
   )
 }
