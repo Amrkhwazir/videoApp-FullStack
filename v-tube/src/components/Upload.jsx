@@ -76,39 +76,41 @@ font-size: 14px;
 
 const Upload = ({setOpen}) => {
 
-  const [img, setImg] = useState(undefined);
-  const [video, setvideo] = useState(undefined);
+  const [img, setImg] = useState("");
+  const [video, setvideo] = useState("");
   const [imgPer, setImgPer] = useState(0);
   const [videoPer, setvideoPer] = useState(0);
   const [inputs, setInputs] = useState({});
   const [tags, setTags] = useState([]);
   
-   const tagsHandler = (e) => {
+     const handleChange = (e) => {
+       setInputs((prev)=>{
+         return {...prev, [e.target.name]: e.target.value};
+        });
+     };
+     
+     const tagsHandler = (e) => {
     setTags(e.target.value.split(","));
-   }
+   };
 
-   const handleChange = (e) => {
-      setInputs((prev)=>{
-        return {...prev, [e.target.name]: e.target.value};
-      })
-   }
    const uploadFile = (file, urlType) => {
 
     const storage = getStorage(app);
-    const fileName = new Date().getTime() + file.name
+    const fileName = new Date().getTime() + file.name;
     const storageRef = ref(storage, fileName);
     const uploadTask = uploadBytesResumable(storageRef, file,);
 
-uploadTask.on('state_changed',
+uploadTask.on(
+  "state_changed",
   (snapshot) => {
 
     const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
     urlType === "imgUrl" ? setImgPer(Math.round(progress)) : setvideoPer(Math.round(progress));
     switch (snapshot.state) {
-      case 'paused':
-        console.log('Upload is paused');
+      case "paused":
+      console.log('Upload is paused');
         break;
-      case 'running':
+        case "running":
         console.log('Upload is running');
         break;
         default:
@@ -116,29 +118,33 @@ uploadTask.on('state_changed',
         }
   },
   (err)=>{
-
-  }, () => {
-    getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+    console.log(err);}, 
+    () => {
+      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+      console.log(downloadURL)
       setInputs((prev)=>{
         return {...prev, [urlType]: downloadURL};
       });
     });
-  } )
-   }
+  }
+  );
+};
 
-   useEffect(()=>{
-   video && uploadFile(video, "videoUrl")
+console.log(inputs)
+useEffect(()=>{
+   video && uploadFile(video, "videoUrl");
   }, [video]);
 
    useEffect(()=>{
-  img && uploadFile(img, "imgUrl")
+  img && uploadFile(img, "imgUrl");
   }, [img]);
 
+
   const uploadHandler = async (e) => {
-    e.preventDefault();
+    
     const res = await axios.post("http://127.0.0.1:8000/api/videos/", {...inputs, tags});
     setOpen(false);
-    console.log(res)
+    console.log(res);
     res.status===200 && <Navigate to={`/video/${res.data._id}`} />
   };
 
@@ -150,8 +156,8 @@ uploadTask.on('state_changed',
       <Title>Upload a New videos</Title>
       <Label>Video:</Label>
     {videoPer> 0 ? ("uploading:" + videoPer + "%") : <Input type="file" accept="video/*" onChange={e => setvideo(e.target.files[0])}/>}
-      <Input type="text" placeholder='Title' name='Title' onChange={handleChange}/>
-      <Desc placeholder='Description' rows={8} name='Desc' onChange={handleChange}/>
+      <Input type="text" placeholder='Title' name='title' onChange={handleChange}/>
+      <Desc placeholder='Description' rows={8} name='desc' onChange={handleChange}/>
       <Input type="text" placeholder='Seprate the tags with commas.' onChange={tagsHandler}/>
       <Label>Image:</Label>
       {imgPer> 0 ? ("uploading:" + imgPer + "%") : <Input type="file" accept="image/*"  onChange={e => setImg(e.target.files[0])}/>}
