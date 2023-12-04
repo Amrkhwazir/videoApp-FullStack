@@ -11,6 +11,7 @@ import {
 import Video from "./pages/Video.jsx";
 import Home from "./pages/Home.jsx";
 import Login from "./pages/Login.jsx";
+import Search from "./pages/Search.jsx";
 
 
 const Container = styled.div`
@@ -46,6 +47,7 @@ function App() {
         <Route index element={<Home type="random" />} />
         <Route path="trends" element={<Home type="trend" />} />
         <Route path="subscriptions" element={<Home type="sub" />} />
+        <Route path="search" element={<Search />} />
         <Route path="signin" element={<Login />} />
         <Route path="video">
         <Route path=":id" element={<Video />} />

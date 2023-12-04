@@ -4,7 +4,8 @@ import vtubeLogo from "../image/logo.png"
 import HomeIcon from '@mui/icons-material/Home';
 import { AccountCircleOutlined, ExploreOutlined, FlagOutlined, GamesOutlined, HelpOutlineOutlined, HistoryOutlined, LiveTvOutlined, MovieCreationOutlined, MusicNoteOutlined, NewspaperOutlined, SettingsBrightnessOutlined, SettingsOutlined, SportsBaseballOutlined, SubscriptionsOutlined, VideoLibraryOutlined } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../redux/userSlice';
 
 
 const Container = styled.div`
@@ -71,6 +72,11 @@ const Title = styled.h2`
 export default function Menu({setDarkMode, darkMode}) {
 
     const {currentUser} = useSelector(state => state.user)
+    const dispatch = useDispatch();
+    const logoutHandler = () => {
+        dispatch(logout);
+
+    }
 
   return (
     <Container>
@@ -160,6 +166,9 @@ export default function Menu({setDarkMode, darkMode}) {
                 <SettingsBrightnessOutlined/>
                {!darkMode ? "Dark Mode" : "Light Mode"}
             </Items>
+        
+                <Button onClick={logoutHandler}>Logout</Button>
+
         </Wrapper>
     </Container>
   )

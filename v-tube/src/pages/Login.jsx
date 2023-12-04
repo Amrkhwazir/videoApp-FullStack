@@ -5,7 +5,8 @@ import { useDispatch } from 'react-redux';
 import { loginFailure, loginStart, loginSuccess } from '../redux/userSlice';
 import {auth, provider} from "../firebaseConfig";
 import {signInWithPopup} from "firebase/auth"
-import { Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
 
 const Container = styled.div`
     display: flex;
@@ -54,6 +55,10 @@ const Button = styled.button`
     border-radius: 5px;
     font-weight: 500;   
     cursor: pointer;
+    
+    &.custom-toast {
+   background-color: ${({ theme }) => theme.bg};
+    color: ${({ theme }) => theme.text};  }
 `;
 const More = styled.div`
     display: flex;
@@ -68,25 +73,74 @@ const Link = styled.span`
     margin-left: 25px;
 `;
 
+
+
 const Login = () => {
 
         const [name, setName] = useState("");
         const [email, setEmail] = useState("");
         const [password, setPassword] = useState("");
         const dispatch = useDispatch();
+        const navigate = useNavigate();
 
+
+// register user
+const signupHandler = async (e) => {
+    e.preventDefault();
+    dispatch(loginStart());
+    try {
+        const res = await axios.post("http://127.0.0.1:8000/api/auth/signup", {name, email, password});
+        console.log(res)
+        toast.success("You Registered Successfully😎🎉", {
+            position: "top-right",
+            theme: "light",
+            autoClose: 1000,
+        });
+        dispatch(loginSuccess(res.data));
+
+      setEmail("");
+      setName("");
+      setPassword("");
+
+    } catch (err) {
+        toast.error("Sorry! Try Again😥", {
+            position: "top-right",
+            theme: "light",
+            autoClose: 1000,
+        });
+        dispatch(loginFailure());
+
+  
+    }
+
+};
+
+
+// login user
         const loginHandler = async (e) => {
             e.preventDefault();
             dispatch(loginStart());
             try {
                 const res = await axios.post("http://127.0.0.1:8000/api/auth/signin", {name, password});
+                toast.success("You Login Successfully😎🎉", {
+                    position: "top-right",
+                    theme: "light",
+                    autoClose: 1000,
+                });
                 dispatch(loginSuccess(res.data));
-                console.log(res.data.data);
+                  
+                //   navigate("/");
             } catch (err) {
+                toast.error("Sorry! Try Again😥", {
+                    position: "top-right",
+                    theme:"light" ,
+                    autoClose: 1000,
+                });
                 dispatch(loginFailure());
             }
-        }
+        };
 
+//google login method
         const signInWithGoogle = () => {
             dispatch(loginStart())
             signInWithPopup(auth, provider)
@@ -96,11 +150,23 @@ const Login = () => {
                     email: result.user.email,
                     img: result.user.photoURL,
                 }).then((res)=>{
+                    toast.success("You Login Successfully😎🎉", {
+                        position: "top-right",
+                        theme: theme ? "light" : "dark",
+                        autoClose: 1000,
+                    });
                     dispatch(loginSuccess(res.data));
-                    <Navigate to="/Home" replace={true} />
+                      
+                     navigate("/");
                 })
             }).catch((error) => {
-                dispatch(loginFailure())
+                
+                toast.error("Sorry! Try Again😥", {
+                    position: "top-right",
+                    theme: theme ? "light" : "dark",
+                    autoClose: 1000,
+                });
+                dispatch(loginFailure(error));
             })
         }
   return (
@@ -117,7 +183,7 @@ const Login = () => {
             <Input placeholder='Username' onChange={e=> setName(e.target.value)}/>
             <Input placeholder='email'  onChange={e=> setEmail(e.target.value)}/>
             <Input type='Password' placeholder='Password' onChange={e=> setPassword(e.target.value)}/>
-            <Button>Sign up</Button>
+            <Button onClick={signupHandler}>Sign up</Button>
         </Wrapper>
         <More>
             English(USA)

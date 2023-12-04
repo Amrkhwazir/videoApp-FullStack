@@ -7,7 +7,7 @@ import {format} from "timeago.js"
 
 
 const Container = styled.div`
-  width: ${(props)=> props.type !== "sm" && "320px"};
+  width: ${(props)=> props.type !== "sm" && "300px"};
   margin-bottom:${(props)=> props.type === "sm" ? "10px" : "45px"};
   cursor: pointer;
   display:  ${(props)=> props.type === "sm" && "flex"};
