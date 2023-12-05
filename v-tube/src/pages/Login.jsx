@@ -7,6 +7,7 @@ import {auth, provider} from "../firebaseConfig";
 import {signInWithPopup} from "firebase/auth"
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Container = styled.div`
     display: flex;
@@ -55,10 +56,6 @@ const Button = styled.button`
     border-radius: 5px;
     font-weight: 500;   
     cursor: pointer;
-    
-    &.custom-toast {
-   background-color: ${({ theme }) => theme.bg};
-    color: ${({ theme }) => theme.text};  }
 `;
 const More = styled.div`
     display: flex;
@@ -90,17 +87,13 @@ const signupHandler = async (e) => {
     dispatch(loginStart());
     try {
         const res = await axios.post("http://127.0.0.1:8000/api/auth/signup", {name, email, password});
-        console.log(res)
         toast.success("You Registered Successfully😎🎉", {
             position: "top-right",
             theme: "light",
             autoClose: 1000,
         });
+        <ToastContainer />
         dispatch(loginSuccess(res.data));
-
-      setEmail("");
-      setName("");
-      setPassword("");
 
     } catch (err) {
         toast.error("Sorry! Try Again😥", {
@@ -108,6 +101,7 @@ const signupHandler = async (e) => {
             theme: "light",
             autoClose: 1000,
         });
+        <ToastContainer />
         dispatch(loginFailure());
 
   
@@ -122,20 +116,22 @@ const signupHandler = async (e) => {
             dispatch(loginStart());
             try {
                 const res = await axios.post("http://127.0.0.1:8000/api/auth/signin", {name, password});
+                console.log(res.data);
                 toast.success("You Login Successfully😎🎉", {
                     position: "top-right",
-                    theme: "light",
+                    theme: 'light',
                     autoClose: 1000,
                 });
+                <ToastContainer />
                 dispatch(loginSuccess(res.data));
-                  
-                //   navigate("/");
+                  navigate("/");
             } catch (err) {
                 toast.error("Sorry! Try Again😥", {
                     position: "top-right",
                     theme:"light" ,
                     autoClose: 1000,
                 });
+                <ToastContainer />
                 dispatch(loginFailure());
             }
         };
@@ -150,14 +146,14 @@ const signupHandler = async (e) => {
                     email: result.user.email,
                     img: result.user.photoURL,
                 }).then((res)=>{
+                    dispatch(loginSuccess(res.data));
+                    navigate("/");
                     toast.success("You Login Successfully😎🎉", {
                         position: "top-right",
                         theme: theme ? "light" : "dark",
                         autoClose: 1000,
                     });
-                    dispatch(loginSuccess(res.data));
-                      
-                     navigate("/");
+                    <ToastContainer />
                 })
             }).catch((error) => {
                 
@@ -166,6 +162,7 @@ const signupHandler = async (e) => {
                     theme: theme ? "light" : "dark",
                     autoClose: 1000,
                 });
+                <ToastContainer />
                 dispatch(loginFailure(error));
             })
         }

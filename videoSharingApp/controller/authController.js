@@ -2,15 +2,15 @@ import mongoose from "mongoose";
 import User from "../models/User.js"
 import bcrypt from "bcrypt";
 import { createError } from "../error.js";
-import jwt  from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 
 
 export const signup = async(req, res, next)=>{
     console.log(req.body);
     try {
-        const salt = bcrypt.genSaltSync(10);
-        const hash = bcrypt.hashSync(req.body.password, salt);
+        const salt = await bcrypt.genSalt(10);
+        const hash = await bcrypt.hash(req.body.password, salt);
         const newUser = new User({...req.body, password: hash });
 
       await  newUser.save();
@@ -26,15 +26,15 @@ export const signin = async(req, res, next)=>{
         const user =  await User.findOne({name: req.body.name});
         if(!user) return next(createError(404, "no user found"))
 
-        const isCorrect =  bcrypt.compare(req.body.password, user.password);
+        const isCorrect = bcrypt.compareSync(req.body.password, user.password);
         if(!isCorrect) return next(createError(400, "wrong password"))
 
-        const token = jwt.sign({id: user._id}, process.env.JWT);
+        const token = jwt.sign({ id: user._id}, process.env.JWT);
         const {password, ...other } = user._doc;
-
-        res.cookie("access_token", token,{
+        res
+        .cookie("access_token", token, {
             httpOnly: true,
-        }).status(200).send(other)
+        }).status(200).send(other)  
     } catch (error) {
         next(error);
     }

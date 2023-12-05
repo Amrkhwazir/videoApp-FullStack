@@ -74,7 +74,7 @@ export default function Menu({setDarkMode, darkMode}) {
     const {currentUser} = useSelector(state => state.user)
     const dispatch = useDispatch();
     const logoutHandler = () => {
-        dispatch(logout);
+        dispatch(logout());
 
     }
 
