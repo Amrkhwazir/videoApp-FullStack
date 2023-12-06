@@ -37,7 +37,7 @@ export const Comments = ({videoId}) => {
   useEffect(()=> {
     const fetchComments = async () => {
       try {
-        const response = axios.get(`http://127.0.0.1:8000/api/comments/${videoId}`)
+        const response = axios.get(`/comments/${videoId}`)
         setComments(response.data);
       } catch (err) {
         console.log(err)

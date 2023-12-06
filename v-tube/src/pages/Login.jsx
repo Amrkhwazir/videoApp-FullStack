@@ -86,7 +86,7 @@ const signupHandler = async (e) => {
     e.preventDefault();
     dispatch(loginStart());
     try {
-        const res = await axios.post("http://127.0.0.1:8000/api/auth/signup", {name, email, password});
+        const res = await axios.post("/api/auth/signup", {name, email, password});
         toast.success("You Registered Successfully😎🎉", {
             position: "top-right",
             theme: "light",
@@ -115,7 +115,7 @@ const signupHandler = async (e) => {
             e.preventDefault();
             dispatch(loginStart());
             try {
-                const res = await axios.post("http://127.0.0.1:8000/api/auth/signin", {name, password});
+                const res = await axios.post("/api/auth/signin", {name, password});
                 console.log(res.data);
                 toast.success("You Login Successfully😎🎉", {
                     position: "top-right",
@@ -141,7 +141,7 @@ const signupHandler = async (e) => {
             dispatch(loginStart())
             signInWithPopup(auth, provider)
             .then((result) => {
-                axios.post("http://127.0.0.1:8000/api/auth/google",{
+                axios.post("/auth/google",{
                     name: result.user.displayName,
                     email: result.user.email,
                     img: result.user.photoURL,

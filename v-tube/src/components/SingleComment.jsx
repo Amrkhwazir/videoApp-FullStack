@@ -37,7 +37,7 @@ export const SingleComment = ({comment}) => {
 
     useEffect(()=> {
       const fetchComment = async () => {
-        const res = await axios.get(`http://127.0.0.1:8000/api/users/find/${comment.userId}`); 
+        const res = await axios.get(`/users/find/${comment.userId}`); 
         setChannel(res.data);
       }
       fetchComment();

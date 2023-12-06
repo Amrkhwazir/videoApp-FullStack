@@ -14,7 +14,7 @@ const Recommendation = ({tags}) => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const res = await axios.get(`http://127.0.0.1:8000/api/videos/tags?tags=${tags}`);
+            const res = await axios.get(`/videos/tags?tags=${tags}`);
             console.log(res);
             setVideos(res.data);
         };

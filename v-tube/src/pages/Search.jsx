@@ -13,7 +13,7 @@ const Search = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const res = await axios.get(`http://127.0.0.1:8000/api/videos/search${query}`);
+            const res = await axios.get(`/videos/search${query}`);
             console.log(res);
             setVideos(res.data);
         };

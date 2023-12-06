@@ -142,7 +142,7 @@ useEffect(()=>{
 
   const uploadHandler = async (e) => {
     
-    const res = await axios.post("http://127.0.0.1:8000/api/videos/", {...inputs, tags});
+    const res = await axios.post("/videos/", {...inputs, tags});
     setOpen(false);
     console.log(res);
     res.status===200 && <Navigate to={`/video/${res.data._id}`} />
