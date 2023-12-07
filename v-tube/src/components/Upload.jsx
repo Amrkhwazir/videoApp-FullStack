@@ -130,7 +130,6 @@ uploadTask.on(
   );
 };
 
-console.log(inputs)
 useEffect(()=>{
    video && uploadFile(video, "videoUrl");
   }, [video]);
@@ -142,9 +141,8 @@ useEffect(()=>{
 
   const uploadHandler = async (e) => {
     
-    const res = await axios.post("/videos/", {...inputs, tags});
+    const res = await axios.post("/api/videos/", {...inputs, tags});
     setOpen(false);
-    console.log(res);
     res.status===200 && <Navigate to={`/video/${res.data._id}`} />
   };
 

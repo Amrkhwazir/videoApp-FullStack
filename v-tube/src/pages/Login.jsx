@@ -87,13 +87,13 @@ const signupHandler = async (e) => {
     dispatch(loginStart());
     try {
         const res = await axios.post("/api/auth/signup", {name, email, password});
+        dispatch(loginSuccess(res.data));
         toast.success("You Registered Successfully😎🎉", {
             position: "top-right",
             theme: "light",
             autoClose: 1000,
         });
         <ToastContainer />
-        dispatch(loginSuccess(res.data));
 
     } catch (err) {
         toast.error("Sorry! Try Again😥", {
@@ -113,9 +113,11 @@ const signupHandler = async (e) => {
 // login user
         const loginHandler = async (e) => {
             e.preventDefault();
+            console.log(name, "name")
+            console.log(password, "password")
             dispatch(loginStart());
             try {
-                const res = await axios.post("/api/auth/signin", {name, password});
+                const res = await axios.post("/api/auth/signin", {email, password});
                 console.log(res.data);
                 toast.success("You Login Successfully😎🎉", {
                     position: "top-right",
@@ -141,7 +143,7 @@ const signupHandler = async (e) => {
             dispatch(loginStart())
             signInWithPopup(auth, provider)
             .then((result) => {
-                axios.post("/auth/google",{
+                axios.post("/api/auth/google",{
                     name: result.user.displayName,
                     email: result.user.email,
                     img: result.user.photoURL,
@@ -159,7 +161,7 @@ const signupHandler = async (e) => {
                 
                 toast.error("Sorry! Try Again😥", {
                     position: "top-right",
-                    theme: theme ? "light" : "dark",
+                    theme: "light",
                     autoClose: 1000,
                 });
                 <ToastContainer />
@@ -171,14 +173,14 @@ const signupHandler = async (e) => {
         <Wrapper>
             <Title>Sign in</Title>
             <SubTitle>to continue to V-Tube</SubTitle>
-            <Input placeholder='Username' onChange={e=> setName(e.target.value)}/>
+            <Input placeholder='Email' type='text' onChange={e=> setEmail(e.target.value)}/>
             <Input type='Password' placeholder='Password' onChange={e=> setPassword(e.target.value)}/>
             <Button onClick={loginHandler}>Sign in</Button>
             <Title>or</Title>
             <Button onClick={signInWithGoogle}>Signin with Google</Button>
             <Title>or</Title>
-            <Input placeholder='Username' onChange={e=> setName(e.target.value)}/>
-            <Input placeholder='email'  onChange={e=> setEmail(e.target.value)}/>
+            <Input type='text' placeholder='Username' onChange={e=> setName(e.target.value)}/>
+            <Input placeholder='email' type='email'  onChange={e=> setEmail(e.target.value)}/>
             <Input type='Password' placeholder='Password' onChange={e=> setPassword(e.target.value)}/>
             <Button onClick={signupHandler}>Sign up</Button>
         </Wrapper>
